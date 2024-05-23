@@ -33,6 +33,7 @@ import modelo.Termometro;
  * @author davidvargas
  */
 public class VentanaPrincipal extends JFrame {
+
     private Termometro termometro;
     private JSlider sliderTemperatura;
     private JLabel labelImagen;
@@ -43,7 +44,6 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal() {
         termometro = new Termometro();
 
-        // Crear 5 personas por defecto
         personas = new Persona[5];
         personas[0] = new Persona("Persona 1");
         personas[1] = new Persona("Persona 2");
@@ -51,14 +51,12 @@ public class VentanaPrincipal extends JFrame {
         personas[3] = new Persona("Persona 4");
         personas[4] = new Persona("Persona 5");
 
-        // Configurar la ventana
         setTitle("Sistema de Monitoreo Meteorológico");
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Configurar la ventana para que se inicie en pantalla completa
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
 
-        // Panel para personas y radio buttons
         JPanel panelPersonas = new JPanel(new GridBagLayout());
         panelPersonas.setBorder(BorderFactory.createTitledBorder("Suscripciones"));
 
@@ -101,12 +99,10 @@ public class VentanaPrincipal extends JFrame {
             }
         });
 
-        // Crear label para la imagen del termómetro
         labelImagen = new JLabel();
         labelImagen.setHorizontalAlignment(SwingConstants.CENTER);
-        actualizarImagen(0); // Inicializar con la imagen para 0 grados
+        actualizarImagen(0);
 
-        // Añadir componentes a la ventana
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
@@ -163,8 +159,8 @@ public class VentanaPrincipal extends JFrame {
         labelImagen.setIcon(icon);
     }
 
-    // Listener para manejar la suscripción/desuscripción de personas
     private class RadioButtonListener implements ActionListener {
+
         private Persona persona;
 
         public RadioButtonListener(Persona persona) {
@@ -182,6 +178,7 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -190,4 +187,5 @@ public class VentanaPrincipal extends JFrame {
             }
         });
     }
+     */
 }
