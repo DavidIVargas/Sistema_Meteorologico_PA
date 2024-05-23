@@ -5,9 +5,18 @@
 package Vista;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
@@ -26,39 +35,62 @@ import modelo.Termometro;
 public class VentanaPrincipal extends JFrame {
     private Termometro termometro;
     private JSlider sliderTemperatura;
-    private JTextArea textAreaNotificaciones;
     private JLabel labelImagen;
+    private JRadioButton[] radioButtons;
+    private JLabel[] labelNotificaciones;
+    private Persona[] personas;
 
     public VentanaPrincipal() {
         termometro = new Termometro();
 
         // Crear 5 personas por defecto
-        Persona p1 = new Persona("Persona 1");
-        Persona p2 = new Persona("Persona 2");
-        Persona p3 = new Persona("Persona 3");
-        Persona p4 = new Persona("Persona 4");
-        Persona p5 = new Persona("Persona 5");
-
-        // Suscribir personas al sistema meteorológico
-        termometro.addObserver(p1);
-        termometro.addObserver(p2);
-        termometro.addObserver(p3);
-        termometro.addObserver(p4);
-        termometro.addObserver(p5);
+        personas = new Persona[5];
+        personas[0] = new Persona("Persona 1");
+        personas[1] = new Persona("Persona 2");
+        personas[2] = new Persona("Persona 3");
+        personas[3] = new Persona("Persona 4");
+        personas[4] = new Persona("Persona 5");
 
         // Configurar la ventana
         setTitle("Sistema de Monitoreo Meteorológico");
-        setSize(400, 500);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+
+        // Panel para personas y radio buttons
+        JPanel panelPersonas = new JPanel(new GridBagLayout());
+        panelPersonas.setBorder(BorderFactory.createTitledBorder("Suscripciones"));
+
+        radioButtons = new JRadioButton[5];
+        labelNotificaciones = new JLabel[5];
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        for (int i = 0; i < 5; i++) {
+            JLabel label = new JLabel(personas[i].getNombre());
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.anchor = GridBagConstraints.WEST;
+            panelPersonas.add(label, gbc);
+
+            radioButtons[i] = new JRadioButton("Suscribir");
+            radioButtons[i].addActionListener(new RadioButtonListener(personas[i]));
+            gbc.gridx = 1;
+            panelPersonas.add(radioButtons[i], gbc);
+
+            labelNotificaciones[i] = new JLabel("");
+            gbc.gridx = 2;
+            panelPersonas.add(labelNotificaciones[i], gbc);
+        }
 
         // Crear slider de temperatura
         sliderTemperatura = new JSlider(0, 100, 0);
         sliderTemperatura.setMajorTickSpacing(10);
         sliderTemperatura.setPaintTicks(true);
         sliderTemperatura.setPaintLabels(true);
-
         sliderTemperatura.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -69,25 +101,35 @@ public class VentanaPrincipal extends JFrame {
             }
         });
 
-        // Crear área de notificaciones
-        textAreaNotificaciones = new JTextArea();
-        textAreaNotificaciones.setEditable(false);
-
         // Crear label para la imagen del termómetro
         labelImagen = new JLabel();
         labelImagen.setHorizontalAlignment(SwingConstants.CENTER);
         actualizarImagen(0); // Inicializar con la imagen para 0 grados
 
         // Añadir componentes a la ventana
-        add(sliderTemperatura, BorderLayout.NORTH);
-        add(new JScrollPane(textAreaNotificaciones), BorderLayout.CENTER);
-        add(labelImagen, BorderLayout.SOUTH);
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(sliderTemperatura, gbc);
+
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(panelPersonas, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(labelImagen, gbc);
 
         setVisible(true);
     }
 
     private void actualizarNotificaciones() {
-        textAreaNotificaciones.setText(""); // Borrar notificaciones previas
         int temperatura = termometro.getTemperatura();
         String color;
         if (temperatura <= 50) {
@@ -97,8 +139,13 @@ public class VentanaPrincipal extends JFrame {
         } else {
             color = "rojo";
         }
-        for (Observer observer : termometro.getObservers()) {
-            textAreaNotificaciones.append("Notificación: La temperatura es " + temperatura + "°C (" + color + ")\n");
+
+        for (int i = 0; i < personas.length; i++) {
+            if (radioButtons[i].isSelected()) {
+                labelNotificaciones[i].setText("La temperatura es " + temperatura + "°C (" + color + ")");
+            } else {
+                labelNotificaciones[i].setText("");
+            }
         }
     }
 
@@ -107,13 +154,32 @@ public class VentanaPrincipal extends JFrame {
         if (temperatura <= 50) {
             imagenPath = "/images/Termometro_Verde.png";
         } else if (temperatura <= 80) {
-            imagenPath = "/images/Termometro_Amarillo.png";
+            imagenPath = "/images/Termometro_Naranja.png";
         } else {
             imagenPath = "/images/Termometro_Rojo.png";
         }
 
         ImageIcon icon = new ImageIcon(getClass().getResource(imagenPath));
         labelImagen.setIcon(icon);
+    }
+
+    // Listener para manejar la suscripción/desuscripción de personas
+    private class RadioButtonListener implements ActionListener {
+        private Persona persona;
+
+        public RadioButtonListener(Persona persona) {
+            this.persona = persona;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JRadioButton source = (JRadioButton) e.getSource();
+            if (source.isSelected()) {
+                termometro.addObserver(persona);
+            } else {
+                termometro.removeObserver(persona);
+            }
+        }
     }
 
     public static void main(String[] args) {
