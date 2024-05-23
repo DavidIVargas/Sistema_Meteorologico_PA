@@ -53,7 +53,7 @@ public class VentanaPrincipal extends JFrame {
 
         // Configurar la ventana
         setTitle("Sistema de Monitoreo Meteorológico");
-        setSize(800, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Configurar la ventana para que se inicie en pantalla completa
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
@@ -154,7 +154,7 @@ public class VentanaPrincipal extends JFrame {
         if (temperatura <= 50) {
             imagenPath = "/images/Termometro_Verde.png";
         } else if (temperatura <= 80) {
-            imagenPath = "/images/Termometro_Naranja.png";
+            imagenPath = "/images/Termometro_Amarillo.png";
         } else {
             imagenPath = "/images/Termometro_Rojo.png";
         }
