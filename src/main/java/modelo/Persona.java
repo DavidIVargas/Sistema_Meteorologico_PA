@@ -26,7 +26,7 @@ public class Persona implements Observer{
         } else {
             color = "rojo";
         }
-        System.out.println("Notificación para " + nombre + ": La temperatura es " + temperatura + "°C (" + color + ")");
+        //System.out.println("Notificación para " + nombre + ": La temperatura es " + temperatura + "°C (" + color + ")");
     }
     
     public String getNombre() {
